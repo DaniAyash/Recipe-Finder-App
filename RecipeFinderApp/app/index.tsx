@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -19,9 +19,21 @@ export default function Index() {
 
       {/* Action Buttons */}
       <View style={styles.buttonContainer}>
-        <Button title="Browse Recipes" onPress={() => router.push("/browse-recipes")} />
-        <View style={{ marginVertical: 10 }} />
-        <Button title="Add Recipe" onPress={() => router.push("/add-recipes")} />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/browse-recipes")}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.buttonText}>Browse Recipes</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/add-recipes")}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.buttonText}>Add Recipe</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -32,7 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 60,
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f0e6", // light brown
   },
   navbar: {
     flexDirection: "row",
@@ -40,17 +52,33 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   loginText: {
-    color: "#007AFF",
+    color: "#8b5e3c", // dark brown text
     fontSize: 16,
     fontWeight: "bold",
   },
   title: {
-    fontSize: 24,
+    fontSize: 32, // larger
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 40,
+    color: "#5c3a00", // darker brown title color
   },
   buttonContainer: {
     alignItems: "center",
+    gap: 20, // spacing between buttons (if supported, else use margin)
+  },
+  button: {
+    backgroundColor: "#8b5e3c", // dark brown
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+    marginVertical: 10,
+    minWidth: 200,
+  },
+  buttonText: {
+    color: "#fff", // white text on buttons
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

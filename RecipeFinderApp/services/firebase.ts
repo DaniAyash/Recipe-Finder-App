@@ -10,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "recipefinderapp-feb48.appspot.com",
   messagingSenderId: "222266700059",
   appId: "1:222266700059:web:10f0149cdedb2d2552a3be",
-  measurementId: "G-422ZCVJ46E" // ✅ okay to keep this even if not used
+  measurementId: "G-422ZCVJ46E" 
 };
 
 // Initialize Firebase
