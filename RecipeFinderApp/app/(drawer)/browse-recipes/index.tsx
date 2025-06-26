@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { fetchRecipes } from "../../services/recipes";
+import { fetchRecipes } from "../../../services/recipes";
 
 export default function BrowseRecipes() {
   const [recipes, setRecipes] = useState<any[]>([]);
