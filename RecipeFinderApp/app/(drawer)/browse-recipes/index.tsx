@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import RecipeCard from "../../../components/RecipeCard";
 import { fetchRecipes } from "../../../services/recipes";
 
 export default function BrowseRecipes() {
@@ -10,7 +11,7 @@ export default function BrowseRecipes() {
     const loadRecipes = async () => {
       try {
         const data = await fetchRecipes();
-        console.log("Fetched recipes in BrowseRecipes:", data); // debug log
+        console.log("Fetched recipes in BrowseRecipes:", data);
         setRecipes(data);
       } catch (err) {
         console.error("Error fetching recipes:", err);
@@ -32,16 +33,13 @@ export default function BrowseRecipes() {
   return (
     <ScrollView style={styles.container}>
       {recipes.map((recipe) => (
-        <View key={recipe.id} style={styles.recipeCard}>
-          <Text style={styles.title}>{recipe.name}</Text>
-          <Text style={styles.subtitle}>{recipe.description}</Text>
-
-          <Text style={styles.sectionTitle}>Ingredients:</Text>
-          <Text style={styles.content}>{recipe.ingredients}</Text>
-
-          <Text style={styles.sectionTitle}>Preparation:</Text>
-          <Text style={styles.content}>{recipe.preparation}</Text>
-        </View>
+        <RecipeCard
+          key={recipe.id}
+          name={recipe.name}
+          description={recipe.description}
+          ingredients={recipe.ingredients}
+          preparation={recipe.preparation}
+        />
       ))}
     </ScrollView>
   );
@@ -52,33 +50,5 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#fff",
     flex: 1,
-  },
-  recipeCard: {
-    marginBottom: 24,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    backgroundColor: "#f9f9f9",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginTop: 10,
-    marginBottom: 2,
-  },
-  content: {
-    fontSize: 14,
-    color: "#333",
   },
 });
