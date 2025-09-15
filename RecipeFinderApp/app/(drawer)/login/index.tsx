@@ -1,38 +1,28 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import { loginUser } from "../../../services/auth";
 
 export default function LoginScreen() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      if (Platform.OS === "web") {
-        window.alert("Please enter email and password.");
-      } else {
-        console.log("Missing Fields", "Please enter email and password.");
-      }
-      return;
-    }
+  const handleLogin = async () => {
+    const result = await loginUser({ email, password });
 
-    if (email === "test@example.com" && password === "123456") {
+    if (result.success) {
       router.replace("/browse-recipes");
     } else {
-      if (Platform.OS === "web") {
-        window.alert("Invalid email or password.");
-      } else {
-        console.log("Login Failed", "Invalid email or password.");
-      }
+      setError(result.message || "Login failed.");
     }
   };
 
@@ -61,6 +51,10 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+
+        {error? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : null}
 
         <TouchableOpacity
           onPress={() => router.push("/register")}
@@ -99,6 +93,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 16,
     backgroundColor: "#fff",
+  },
+    errorText: {
+    color: "red",
+    textAlign: "center",
+    marginBottom: 16,
   },
   button: {
     backgroundColor: "#8d6e63",
