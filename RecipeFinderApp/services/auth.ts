@@ -58,37 +58,47 @@ type RegisterParams = {
 
 
 export const registerUser = async ({ email, username, password, confirmPassword, age }: RegisterParams) => {
-    if (!email || !username || !password || !confirmPassword) {
-        throw new Error("Please fill in all required fields.");
-    }
-    if(password !== confirmPassword) {
-        throw new Error("Passwords do not match."); 
-    }
-    if(age !== undefined && (age < 13 || age > 120)) {
-        throw new Error("Please enter a valid age between 13 and 120.");
-    }
+  if (!email || !username || !password || !confirmPassword) {
+    return { success: false, message: "Please fill in all required fields." };
+  }
+  if (password !== confirmPassword) {
+    return { success: false, message: "Passwords do not match." };
+  }
+  if (age !== undefined && (age < 13 || age > 120)) {
+    return { success: false, message: "Please enter a valid age between 13 and 120." };
+  }
 
+  try {
     const usersRef = collection(db, "users");
-    const usernameQuery = query(usersRef, where("username", "==", username));
-    const emailQuery = query(usersRef, where("email", "==", email));
 
-    const usernameSnapshot = await getDocs(usernameQuery);
+    // check username
+    const usernameSnapshot = await getDocs(query(usersRef, where("username", "==", username)));
     if (!usernameSnapshot.empty) {
-        throw new Error("Username already taken.");
+      return { success: false, message: "Username already taken." };
     }
 
-    const emailSnapshot = await getDocs(emailQuery);
+    // check email
+    const emailSnapshot = await getDocs(query(usersRef, where("email", "==", email)));
     if (!emailSnapshot.empty) {
-        throw new Error("Email already registered.");
+      return { success: false, message: "Email already registered." };
     }
 
+    // add user
     const newUser = await addDoc(usersRef, {
-        email,
-        username,
-        password,
-        age: age || null,
-        createdAt: new Date(),
+      email,
+      username,
+      password,
+      age: age || null,
+      createdAt: new Date(),
     });
 
-    return { id: newUser.id, email, username, age: age || null};
+    return {
+      success: true,
+      data: { id: newUser.id, email, username, age: age || null },
+    };
+  } catch (err: any) {
+    console.error("Register error:", err);
+    return { success: false, message: "An error occurred during registration." };
+  }
 };
+

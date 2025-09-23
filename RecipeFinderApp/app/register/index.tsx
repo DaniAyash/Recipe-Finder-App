@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Platform, StyleSheet, Text, TextInput, View } from "react-native";
 import { registerUser } from "../../services/auth";
 
 export default function RegisterScreen() {
@@ -11,22 +11,31 @@ export default function RegisterScreen() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [age, setAge] = useState("");
     const [error, setError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+
+    const showAlert = (title: string, message: string, onOk?: () => void) => {
+        if (Platform.OS === "web") {
+        window.alert(`${title}\n\n${message}`);
+        if (onOk) onOk();
+        } else {
+        Alert.alert(title, message, [{ text: "OK", onPress: onOk }]);
+        }
+    };
 
     const handleRegister = async () => {
-        try {
-            const user = await registerUser({
-                email,
-                username,
-                password,
-                confirmPassword,
-                age: age ? parseInt(age) : undefined,
+        const result = await registerUser({
+            email,
+            username,
+            password,
+            confirmPassword,
+            age: age ? parseInt(age) : undefined,
+        });
+
+        if (result.success) {
+            showAlert("Success", result.message || "Registration successful.", () => {
+                router.replace("/login");
             });
-            setSuccessMessage("Registration successful! You can now log in.");
-            setError(""); // clear error if success
-        } catch (err: any) {
-            setError(err.message || "Registration failed.");
-            setSuccessMessage(""); // clear success if error
+        } else {
+            setError(result.message || "Registration failed.");
         }
     };
 
@@ -72,7 +81,6 @@ export default function RegisterScreen() {
             />
 
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
 
             <Button title="Register" onPress={handleRegister} color="#8d6e63" />
         </View>
