@@ -8,9 +8,11 @@ import {
   View
 } from "react-native";
 import { loginUser } from "../../../services/auth";
+import { useAuth } from "../../../services/AuthContext";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +21,8 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     const result = await loginUser({ email, password });
 
-    if (result.success) {
+    if (result.success && result.data) {
+      login(result.data);
       router.replace("/browse-recipes");
     } else {
       setError(result.message || "Login failed.");

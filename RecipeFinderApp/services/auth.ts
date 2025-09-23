@@ -38,6 +38,7 @@ type RegisterParams = {
             return {
                 success: true,
                 message: "Login successful.",
+                data: { id: querySnapshot.docs[0].id, email: user.email, username: user.username, age: user.age}
             }
         }
         else {
