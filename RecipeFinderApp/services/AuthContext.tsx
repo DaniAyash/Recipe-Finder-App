@@ -1,6 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { doc, updateDoc } from "firebase/firestore";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { db } from "./firebase";
 
 type User = {
@@ -9,34 +10,47 @@ type User = {
   username?: string;
   age?: number;
   connected?: boolean;
-  // add any other fields you get from backend
 };
 
 type AuthContextType = {
   user: User | null;
-  login: (userData: User) => void;
-  logout: () => void;
+  login: (userData: User) => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const router = useRouter();
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
-  const login = (userData: User) => {
+  // 🔹 Load user from AsyncStorage on app start
+  useEffect(() => {
+    const loadUser = async () => {
+      const storedUser = await AsyncStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    };
+    loadUser();
+  }, []);
+
+  // 🔹 Save user to AsyncStorage when logging in
+  const login = async (userData: User) => {
     setUser(userData);
-    // optionally save to AsyncStorage if you want persistence
+    await AsyncStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const logout = () => {
-    if (user && user.id) {
+  // 🔹 Clear user both locally and from AsyncStorage
+  const logout = async () => {
+    if (user?.id) {
       const userDocRef = doc(db, "users", user.id);
-      updateDoc(userDocRef, { connected: false });
+      await updateDoc(userDocRef, { connected: false });
     }
+
     setUser(null);
+    await AsyncStorage.removeItem("user");
     router.replace("/");
-    // optionally remove from AsyncStorage
   };
 
   return (

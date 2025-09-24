@@ -34,6 +34,13 @@ type RegisterParams = {
         }
         const user = querySnapshot.docs[0].data();
 
+        if (user.connected) {
+          return {
+            success: false,
+            message: "This user is already connected!",
+          };
+        }
+
         if (user.password === password) {
           
           const userDocRef = querySnapshot.docs[0].ref;

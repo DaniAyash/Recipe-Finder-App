@@ -1,5 +1,6 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -17,6 +18,15 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+    // <-- reset form fields on screen focus
+  useFocusEffect(
+    useCallback(() => {
+      setEmail("");
+      setPassword("");
+      setError("");
+    }, [])
+  );
 
   const handleLogin = async () => {
     const result = await loginUser({ email, password });
