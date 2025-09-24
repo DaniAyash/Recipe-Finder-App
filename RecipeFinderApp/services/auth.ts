@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "./firebase";
 
 type LoginParams = {
@@ -35,10 +35,14 @@ type RegisterParams = {
         const user = querySnapshot.docs[0].data();
 
         if (user.password === password) {
+          
+          const userDocRef = querySnapshot.docs[0].ref;
+          await updateDoc(userDocRef, { connected: true });
+
             return {
                 success: true,
                 message: "Login successful.",
-                data: { id: querySnapshot.docs[0].id, email: user.email, username: user.username, age: user.age}
+                data: { id: querySnapshot.docs[0].id, email: user.email, username: user.username, age: user.age, connected: true }
             }
         }
         else {
@@ -91,6 +95,7 @@ export const registerUser = async ({ email, username, password, confirmPassword,
       password,
       age: age || null,
       createdAt: new Date(),
+      connected: false,
     });
 
     return {

@@ -1,10 +1,14 @@
 import { useRouter } from "expo-router";
+import { doc, updateDoc } from "firebase/firestore";
 import React, { createContext, ReactNode, useContext, useState } from "react";
+import { db } from "./firebase";
 
 type User = {
   id: string;
   email: string;
   username?: string;
+  age?: number;
+  connected?: boolean;
   // add any other fields you get from backend
 };
 
@@ -26,6 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    if (user && user.id) {
+      const userDocRef = doc(db, "users", user.id);
+      updateDoc(userDocRef, { connected: false });
+    }
     setUser(null);
     router.replace("/");
     // optionally remove from AsyncStorage

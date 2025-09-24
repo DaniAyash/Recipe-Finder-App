@@ -15,7 +15,7 @@ function LayoutContent() {
   return (
     <View style={styles.container}>
       {/* Top bar with logout button (only if logged in) */}
-      {user && (
+      {user?.connected && (
         <View style={styles.topBar}>
           <Text>Hello, {user.username} </Text>
           <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
