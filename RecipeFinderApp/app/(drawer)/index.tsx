@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import FavoriteButton from "../../components/FavoriteButton";
 import { useAuth } from "../../services/AuthContext";
 
@@ -12,9 +12,11 @@ export default function Index() {
     <View style={styles.container}>
       {/* Simple Navbar */}
       <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => router.push("/login")}>
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
+        {!user?.connected && (
+          <TouchableOpacity onPress={() => router.push("/login")}>
+            <Text style={styles.loginText}>Login</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Welcome Text */}
@@ -32,7 +34,19 @@ export default function Index() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/add-recipes")}
+          onPress={() => {
+            if (!user?.connected) {
+              if (Platform.OS === "web") {
+                window.alert("Please log in to add a recipe.");
+              }
+              else {
+                Alert.alert("Please log in to add a recipe.");
+              }
+            }
+            else {
+              router.push("/add-recipes");
+            }
+          }}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonText}>Add Recipe</Text>

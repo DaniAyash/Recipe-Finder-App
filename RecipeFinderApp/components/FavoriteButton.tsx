@@ -10,7 +10,7 @@ export default function FavoriteButton({ username }: FavoriteButtonProps) {
   const router = useRouter();
 
   const handlePress = () => {
-    router.push("/favorite-recipes/index"); // navigate to favorite recipes screen
+    router.push("/favorite-recipes"); // navigate to favorite recipes screen
   };
 
   return (
