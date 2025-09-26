@@ -47,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userDocRef = doc(db, "users", user.id);
       await updateDoc(userDocRef, { connected: false });
     }
-
     setUser(null);
     await AsyncStorage.removeItem("user");
     router.replace("/");

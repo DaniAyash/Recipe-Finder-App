@@ -1,102 +1,174 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { Alert, Button, Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+    Alert,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { registerUser } from "../../services/auth";
 
 export default function RegisterScreen() {
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [age, setAge] = useState("");
-    const [error, setError] = useState("");
+  const router = useRouter();
 
-    const showAlert = (title: string, message: string, onOk?: () => void) => {
-        if (Platform.OS === "web") {
-        window.alert(`${title}\n\n${message}`);
-        if (onOk) onOk();
-        } else {
-        Alert.alert(title, message, [{ text: "OK", onPress: onOk }]);
-        }
-    };
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [age, setAge] = useState("");
+  const [error, setError] = useState("");
 
-    const handleRegister = async () => {
-        const result = await registerUser({
-            email,
-            username,
-            password,
-            confirmPassword,
-            age: age ? parseInt(age) : undefined,
-        });
+  // reset fields when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      setEmail("");
+      setUsername("");
+      setPassword("");
+      setConfirmPassword("");
+      setAge("");
+      setError("");
+    }, [])
+  );
 
-        if (result.success) {
-            showAlert("Success", result.message || "Registration successful.", () => {
-                router.replace("/login");
-            });
-        } else {
-            setError(result.message || "Registration failed.");
-        }
-    };
+  const showAlert = (title: string, message: string, onOk?: () => void) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n\n${message}`);
+      if (onOk) onOk();
+    } else {
+      Alert.alert(title, message, [{ text: "OK", onPress: onOk }]);
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Register for Recipe Finder</Text>
+  const handleRegister = async () => {
+    const result = await registerUser({
+      email,
+      username,
+      password,
+      confirmPassword,
+      age: age ? parseInt(age) : undefined,
+    });
 
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                value={username}
-                onChangeText={setUsername}
-                autoCapitalize="none"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                secureTextEntry
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Age (optional)"
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-            />
+    if (result.success) {
+      showAlert("Success", result.message || "Registration successful.", () => {
+        router.replace("/login");
+      });
+    } else {
+      setError(result.message || "Registration failed.");
+    }
+  };
 
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+  return (
+    <View style={styles.container}>
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Register for Recipe Finder</Text>
 
-            <Button title="Register" onPress={handleRegister} color="#8d6e63" />
-        </View>
-    );
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          placeholder="Username"
+          style={styles.input}
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          placeholder="Password"
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        <TextInput
+          placeholder="Confirm Password"
+          style={styles.input}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+
+        <TextInput
+          placeholder="Age (optional)"
+          style={styles.input}
+          value={age}
+          onChangeText={setAge}
+          keyboardType="numeric"
+        />
+
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.push("/login")}
+          style={{ marginTop: 16 }}
+        >
+          <Text style={styles.link}>Already have an account? Login</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: { padding: 20 },
-    title: { fontSize: 20, fontWeight: "bold", marginBottom: 16 },
-    input: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        padding: 10,
-        marginVertical: 8,
-        borderRadius: 5,
-    },
-    errorText: { color: "red", marginTop: 8 },
-    successText: { color: "green", marginTop: 8 },
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f0e6",
+    justifyContent: "center",
+  },
+  formContainer: {
+    width: "100%",
+    maxWidth: 450,
+    alignSelf: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 32,
+    textAlign: "center",
+    color: "#4e342e",
+  },
+  input: {
+    height: 48,
+    borderColor: "#aaa",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+    backgroundColor: "#fff",
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  button: {
+    backgroundColor: "#8d6e63",
+    padding: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  link: {
+    textAlign: "center",
+    color: "#6d4c41",
+  },
 });

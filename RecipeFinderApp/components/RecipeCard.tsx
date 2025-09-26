@@ -19,10 +19,10 @@ export default function RecipeCard({
       <Text style={styles.title}>{name}</Text>
       <Text style={styles.subtitle}>{description}</Text>
 
-      <Text style={styles.sectionTitle}>Ingredients:</Text>
+      <Text style={styles.sectionTitle}>Ingredients</Text>
       <Text style={styles.content}>{ingredients}</Text>
 
-      <Text style={styles.sectionTitle}>Preparation:</Text>
+      <Text style={styles.sectionTitle}>Preparation</Text>
       <Text style={styles.content}>{preparation}</Text>
     </View>
   );
@@ -30,31 +30,42 @@ export default function RecipeCard({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 24,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    backgroundColor: "#f9f9f9",
+    maxWidth: "48%", // so at most 2 per row
+    margin: 6,
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: "#fff8f0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+
+    // let height grow based on text (no stretch)
+    flexGrow: 0,
+    flexShrink: 1,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 4,
+    color: "#4e342e",
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
-    color: "#666",
-    marginBottom: 8,
+    color: "#6d4c41",
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
-    marginTop: 10,
-    marginBottom: 2,
+    color: "#3e2723",
+    marginTop: 8,
+    marginBottom: 4,
   },
   content: {
     fontSize: 14,
-    color: "#333",
+    color: "#4e342e",
+    lineHeight: 20,
   },
 });

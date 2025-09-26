@@ -1,9 +1,12 @@
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import FavoriteButton from "../../components/FavoriteButton";
+import { useAuth } from "../../services/AuthContext";
 
 export default function Index() {
   const router = useRouter();
+  const { user } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -34,6 +37,11 @@ export default function Index() {
         >
           <Text style={styles.buttonText}>Add Recipe</Text>
         </TouchableOpacity>
+
+        { user?.connected &&
+          <FavoriteButton username={user.username} />
+        }
+        
       </View>
     </View>
   );
